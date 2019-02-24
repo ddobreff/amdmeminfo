@@ -1,15 +1,14 @@
 # amdmeminfo
 
 
-Get GDDR5 memory information from AMD Radeon GPUs.  Includes memory timing.
+Get GDDR5 memory information from AMD Radeon GPUs.  Includes memory timings.
 
 ---
 
 ### Installation
 
-* Download and unzip or git clone: `git clone https://github.com/ystarnaud/amdmeminfo`
+* Download and unzip or git clone: `git clone https://github.com/ddobreff/amdmeminfo`
 * `cd amdmeminfo`
-* Edit `Makefile` to specify AMDAPPSDK path or install OpenCL library: `sudo apt-get install ocl-icd-opencl-dev `
 * Install Linux PCI utilities: `sudo apt-get install libpci-dev`
 * `make`
 * Optional: `sudo cp amdmeminfo /usr/local/bin`
@@ -21,7 +20,8 @@ Get GDDR5 memory information from AMD Radeon GPUs.  Includes memory timing.
 `./amdmeminfo [options]`
 
 Options:
-* `-c` `--memconfig` Output memory configuration and timing
+* `-c` `--memconfig` Output memory configuration and running timing
+* `-n` `----no-opencl` Disable OpenCL information lookup
 * `-h` `--help` Display Help
 * `-o` `--opencl` Order by OpenCL ID (cgminer/sgminer GPU order)
 * `-q` `--quiet` Only output results
