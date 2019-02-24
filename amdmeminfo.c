@@ -2,6 +2,7 @@
  * AMDMemInfo, (c) 2014 by Zuikkis <zuikkis@gmail.com>
  * Updated by Yann St.Arnaud <ystarnaud@gmail.com>
  * Updated 2018 by Ralph Doncaster github.com/nerdralph
+ * Updated 2019 by Dobromir Dobrev github.com/ddobreff
  *
  * Loosely based on "amdmeminfo" by Joerie de Gram.
  *
@@ -43,7 +44,8 @@
 
 #define VERSION                                                                \
   "AMDMemInfo by Zuikkis <zuikkis@gmail.com>\n"                                \
-  "Updated by Yann St.Arnaud <ystarnaud@gmail.com> and Nerd Ralph"
+  "Updated by Yann St.Arnaud <ystarnaud@gmail.com>, Nerd Ralph and Dobromir "  \
+  "Dobrev <dobreff@gmail.com>"
 
 #define LOG_INFO 1
 #define LOG_ERROR 2
@@ -742,87 +744,87 @@ static void get_bios_version(gpu_t *gpu) {
 }
 
 // print memory timing
-static void print_timing(gpu_t *gpu)
-    /* More readable and fixes damn CLEHF/WREHF */
-    SEQ_RAS_TIMING *ras_t = (SEQ_RAS_TIMING *)&(gpu->ras_t);
-SEQ_CAS_TIMING *cas_t = (SEQ_CAS_TIMING *)&(gpu->cas_t);
-SEQ_MISC_TIMING *misc_t = (SEQ_MISC_TIMING *)&(gpu->misc_t);
-SEQ_MISC_TIMING2 *misc_t2 = (SEQ_MISC_TIMING2 *)&(gpu->misc_t2);
-SEQ_MISC8 *misc8 = (SEQ_MISC8 *)&(gpu->misc8);
-SEQ_MISC1 *misc1 = (SEQ_MISC1 *)&(gpu->misc1);
-SEQ_MISC3 *misc3 = (SEQ_MISC3 *)&(gpu->misc3);
-ARB_DRAM_TIMING *arb_dram = (ARB_DRAM_TIMING *)&(gpu->arb_dram);
-ARB_DRAM_TIMING2 *arb_dram2 = (ARB_DRAM_TIMING2 *)&(gpu->arb_dram2);
+static void print_timing(gpu_t *gpu) {
+  /* More readable and fixes damn CLEHF/WREHF */
+  SEQ_RAS_TIMING *ras_t = (SEQ_RAS_TIMING *)&(gpu->ras_t);
+  SEQ_CAS_TIMING *cas_t = (SEQ_CAS_TIMING *)&(gpu->cas_t);
+  SEQ_MISC_TIMING *misc_t = (SEQ_MISC_TIMING *)&(gpu->misc_t);
+  SEQ_MISC_TIMING2 *misc_t2 = (SEQ_MISC_TIMING2 *)&(gpu->misc_t2);
+  SEQ_MISC8 *misc8 = (SEQ_MISC8 *)&(gpu->misc8);
+  SEQ_MISC1 *misc1 = (SEQ_MISC1 *)&(gpu->misc1);
+  SEQ_MISC3 *misc3 = (SEQ_MISC3 *)&(gpu->misc3);
+  ARB_DRAM_TIMING *arb_dram = (ARB_DRAM_TIMING *)&(gpu->arb_dram);
+  ARB_DRAM_TIMING2 *arb_dram2 = (ARB_DRAM_TIMING2 *)&(gpu->arb_dram2);
 
-/* We hereby present to you ASIC GDDR5 timing sets :) */
-printf("\t\t--- BEGIN EXPORT ---\n");
-printf("\n--- ASIC DRAM TIMINGS ---\n");
-printf("--> RAS_TIMING\n");
-printf("TRCDW=%d ", ras_t->TRCDW);
-printf("TRCDWA=%d ", ras_t->TRCDWA);
-printf("TRCDR=%d ", ras_t->TRCDR);
-printf("TRCDRA=%d ", ras_t->TRCDRA);
-printf("TRRD=%d ", ras_t->TRRD);
-printf("TRC=%d\n", ras_t->TRC);
+  /* We hereby present to you ASIC GDDR5 timing sets :) */
+  printf("\t\t--- BEGIN EXPORT ---\n");
+  printf("\n--- ASIC DRAM TIMINGS ---\n");
+  printf("--> RAS_TIMING\n");
+  printf("TRCDW=%d ", ras_t->TRCDW);
+  printf("TRCDWA=%d ", ras_t->TRCDWA);
+  printf("TRCDR=%d ", ras_t->TRCDR);
+  printf("TRCDRA=%d ", ras_t->TRCDRA);
+  printf("TRRD=%d ", ras_t->TRRD);
+  printf("TRC=%d\n", ras_t->TRC);
 
-printf("--> CAS_TIMING\n");
-printf("TNOPW=%d ", cas_t->TNOPW);
-printf("TNOPR=%d ", cas_t->TNOPR);
-printf("TR2W=%d ", cas_t->TR2W);
-printf("TCCDL=%d ", cas_t->TCCDL);
-printf("TR2R=%d ", cas_t->TR2R);
-printf("TW2R=%d ", cas_t->TW2R);
-printf("TCL=%d\n", cas_t->TCL);
+  printf("--> CAS_TIMING\n");
+  printf("TNOPW=%d ", cas_t->TNOPW);
+  printf("TNOPR=%d ", cas_t->TNOPR);
+  printf("TR2W=%d ", cas_t->TR2W);
+  printf("TCCDL=%d ", cas_t->TCCDL);
+  printf("TR2R=%d ", cas_t->TR2R);
+  printf("TW2R=%d ", cas_t->TW2R);
+  printf("TCL=%d\n", cas_t->TCL);
 
-printf("--> MISC_TIMING\n");
-printf("TRP_WRA=%d ", misc_t->TRP_WRA);
-printf("TRP_RDA=%d ", misc_t->TRP_RDA);
-printf("TRP=%d ", misc_t->TRP);
-printf("TRFC=%d\n", misc_t->TRFC);
+  printf("--> MISC_TIMING\n");
+  printf("TRP_WRA=%d ", misc_t->TRP_WRA);
+  printf("TRP_RDA=%d ", misc_t->TRP_RDA);
+  printf("TRP=%d ", misc_t->TRP);
+  printf("TRFC=%d\n", misc_t->TRFC);
 
-printf("--> MISC_TIMING2\n");
-printf("PA2RDATA=%d ", misc_t2->PA2RDATA);
-printf("PA2WDATA=%d ", misc_t2->PA2WDATA);
-printf("TFAW=%d ", misc_t2->TFAW);
-printf("TREDC=%d ", misc_t2->TREDC);
-printf("TWEDC=%d ", misc_t2->TWEDC);
-printf("T32AW=%d\n", misc_t2->T32AW);
+  printf("--> MISC_TIMING2\n");
+  printf("PA2RDATA=%d ", misc_t2->PA2RDATA);
+  printf("PA2WDATA=%d ", misc_t2->PA2WDATA);
+  printf("TFAW=%d ", misc_t2->TFAW);
+  printf("TREDC=%d ", misc_t2->TREDC);
+  printf("TWEDC=%d ", misc_t2->TWEDC);
+  printf("T32AW=%d\n", misc_t2->T32AW);
 
-/* These are DRAM mode register timings, we are not going to expose all due to
- * not important and vendor specific values used */
-printf("\n--- MODE REGISTERS ---\n");
-printf("--> MISC1_MR0\n");
-printf("WL=%d ", misc1->wl);
-printf("CL=%d ",
-       5 + (misc1->cl |
-            (misc8->clehf << 4))); /* GDDR5 Documentation states this is formed
-                                      by CLEHF being 0 or 1 */
-printf("WR=%d\n",
-       4 + (misc1->wr |
-            (misc8->wrehf << 4))); /* GDDR5 Documentation states this is formed
-                                      by WREHF being 0 or 1 */
+  /* These are DRAM mode register timings, we are not going to expose all due to
+   * not important and vendor specific values used */
+  printf("\n--- MODE REGISTERS ---\n");
+  printf("--> MISC1_MR0\n");
+  printf("WL=%d ", misc1->wl);
+  printf("CL=%d ",
+         5 + (misc1->cl |
+              (misc8->clehf << 4))); /* GDDR5 Documentation states this is
+                                        formed by CLEHF being 0 or 1 */
+  printf("WR=%d\n",
+         4 + (misc1->wr |
+              (misc8->wrehf << 4))); /* GDDR5 Documentation states this is
+                                        formed by WREHF being 0 or 1 */
 
-printf("--> MISC3_MR5\n");
-printf("RAS=%d\n", misc3->tras);
+  printf("--> MISC3_MR5\n");
+  printf("RAS=%d\n", misc3->tras);
 
-printf("--> MISC8_MR8\n");
-printf("CLEHF=%d ", misc8->clehf);
-printf("WREHF=%d ", misc8->wrehf);
-printf("RFU=%d\n", misc8->rfu);
+  printf("--> MISC8_MR8\n");
+  printf("CLEHF=%d ", misc8->clehf);
+  printf("WREHF=%d ", misc8->wrehf);
+  printf("RFU=%d\n", misc8->rfu);
 
-/* Those are Arbitrary DRAM timings that Driver sets and uses */
-printf("\n--- DRIVER TIMINGS ---\n");
-printf("--> ARB_DRAM_TIMING\n");
-printf("ACTRD=%d ", arb_dram->ACTRD);
-printf("ACTWR=%d ", arb_dram->ACTWR);
-printf("RASMACTRD=%d ", arb_dram->RASMACTRD);
-printf("RASMACTWR=%d\n", arb_dram->RASMACTWR);
-printf("--> ARB_DRAM_TIMING2\n");
-printf("RAS2RAS=%d ", arb_dram2->RAS2RAS);
-printf("RP=%d ", arb_dram2->RP);
-printf("WRPLUSRP=%d ", arb_dram2->WRPLUSRP);
-printf("BUS_TURN=%d\n", arb_dram2->BUS_TURN);
-printf("\t\t--- END EXPORT ---\n");
+  /* Those are Arbitrary DRAM timings that Driver sets and uses */
+  printf("\n--- DRIVER TIMINGS ---\n");
+  printf("--> ARB_DRAM_TIMING\n");
+  printf("ACTRD=%d ", arb_dram->ACTRD);
+  printf("ACTWR=%d ", arb_dram->ACTWR);
+  printf("RASMACTRD=%d ", arb_dram->RASMACTRD);
+  printf("RASMACTWR=%d\n", arb_dram->RASMACTWR);
+  printf("--> ARB_DRAM_TIMING2\n");
+  printf("RAS2RAS=%d ", arb_dram2->RAS2RAS);
+  printf("RP=%d ", arb_dram2->RP);
+  printf("WRPLUSRP=%d ", arb_dram2->WRPLUSRP);
+  printf("BUS_TURN=%d\n", arb_dram2->BUS_TURN);
+  printf("\t\t--- END EXPORT ---\n");
 }
 /*
  * Find all suitable cards, then find their memory space and get memory
