@@ -21,7 +21,7 @@ Get GDDR5 memory information from AMD Radeon GPUs.  Includes memory timings.
 
 Options:
 * `-c` `--memconfig` Output memory configuration and running timing
-* `-n` `----no-opencl` Disable OpenCL information lookup
+* `-n` `--no-opencl` Disable OpenCL information lookup
 * `-h` `--help` Display Help
 * `-o` `--opencl` Order by OpenCL ID (cgminer/sgminer GPU order)
 * `-q` `--quiet` Only output results
