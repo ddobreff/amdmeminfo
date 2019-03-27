@@ -416,8 +416,8 @@ typedef struct gpu {
   u16 vendor_id, device_id;
   gputype_t *gpu;
   memtype_t *mem;
-  int memconfig, ras_t, cas_t, misc_t, misc_t2, misc1, misc3, misc8, arb_dram,
-      arb_dram2, mem_type, mem_manufacturer, mem_model;
+  int memconfig, ras_t, cas_t, misc_t, misc9_t, misc_t2, misc1, misc3, misc8,
+      arb_dram, arb_dram2, mem_type, mem_manufacturer, mem_model;
   u8 pcibus, pcidev, pcifunc, pcirev;
   int opencl_platform;
   int opencl_id;
@@ -749,6 +749,7 @@ static void print_timing(gpu_t *gpu) {
   SEQ_RAS_TIMING *ras_t = (SEQ_RAS_TIMING *)&(gpu->ras_t);
   SEQ_CAS_TIMING *cas_t = (SEQ_CAS_TIMING *)&(gpu->cas_t);
   SEQ_MISC_TIMING *misc_t = (SEQ_MISC_TIMING *)&(gpu->misc_t);
+  SEQ_MISC_TIMING_R9 *misc9_t = (SEQ_MISC_TIMING_R9 *)&(gpu->misc9_t);
   SEQ_MISC_TIMING2 *misc_t2 = (SEQ_MISC_TIMING2 *)&(gpu->misc_t2);
   SEQ_MISC8 *misc8 = (SEQ_MISC8 *)&(gpu->misc8);
   SEQ_MISC1 *misc1 = (SEQ_MISC1 *)&(gpu->misc1);
@@ -777,11 +778,19 @@ static void print_timing(gpu_t *gpu) {
   printf("TCL=%d\n", cas_t->TCL);
 
   printf("--> MISC_TIMING\n");
-  printf("TRP_WRA=%d ", misc_t->TRP_WRA);
-  printf("TRP_RDA=%d ", misc_t->TRP_RDA);
-  printf("TRP=%d ", misc_t->TRP);
-  printf("TRFC=%d\n", misc_t->TRFC);
-
+  if ((gpu->gpu->asic_type == CHIP_HAWAII) &&
+      (gpu->gpu->asic_type == CHIP_TONGA) &&
+      (gpu->gpu->asic_type == CHIP_TAHITI)) {
+    printf("TRP_WRA=%d ", misc9_t->TRP_WRA);
+    printf("TRP_RDA=%d ", misc9_t->TRP_RDA);
+    printf("TRP=%d ", misc9_t->TRP);
+    printf("TRFC=%d\n", misc9_t->TRFC);
+  } else {
+    printf("TRP_WRA=%d ", misc_t->TRP_WRA);
+    printf("TRP_RDA=%d ", misc_t->TRP_RDA);
+    printf("TRP=%d ", misc_t->TRP);
+    printf("TRFC=%d\n", misc_t->TRFC);
+  }
   printf("--> MISC_TIMING2\n");
   printf("PA2RDATA=%d ", misc_t2->PA2RDATA);
   printf("PA2WDATA=%d ", misc_t2->PA2WDATA);
@@ -939,6 +948,7 @@ int main(int argc, char *argv[]) {
                 d->ras_t = pcimem[mmMC_SEQ_RAS_TIMING];
                 d->cas_t = pcimem[mmMC_SEQ_CAS_TIMING];
                 d->misc_t = pcimem[mmMC_SEQ_MISC_TIMING];
+                d->misc9_t = pcimem[mmMC_SEQ_MISC_TIMING];
                 d->misc_t2 = pcimem[mmMC_SEQ_MISC_TIMING2];
                 d->misc1 = pcimem[mmMC_SEQ_MISC1];
                 d->misc3 = pcimem[mmMC_SEQ_MISC3];
