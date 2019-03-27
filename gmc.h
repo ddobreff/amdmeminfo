@@ -36,12 +36,9 @@ typedef struct _SEQ_MISC_TIMING {
 
 typedef struct _SEQ_MISC_TIMING_R9 {
   uint32_t TRP_WRA : 8;
-  uint32_t Pad0 : 1;
-  uint32_t TRP_RDA : 6;
-  uint32_t Pad1 : 1;
-  uint32_t TRP : 4;
+  uint32_t TRP_RDA : 7;
+  uint32_t TRP : 5;
   uint32_t TRFC : 9;
-  uint32_t Pad2 : 3;
 } SEQ_MISC_TIMING_R9;
 
 typedef struct _SEQ_MISC_TIMING2 {
