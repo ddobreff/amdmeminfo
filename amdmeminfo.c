@@ -423,7 +423,6 @@ typedef struct gpu {
   int opencl_id;
   u32 subvendor, subdevice;
   char *path;
-  unsigned char *vbios;
   char bios_version[64];
   struct gpu *prev, *next;
 } gpu_t;
@@ -442,7 +441,6 @@ static gpu_t *new_device() {
   // default values
   d->gpu = NULL;
   d->mem = NULL;
-  d->vbios = NULL;
   memset(d->bios_version, 0, 64);
   d->opencl_platform = -1;
   d->opencl_id = -1;
@@ -466,10 +464,6 @@ static void free_devices() {
   while (last_device) {
     d = last_device;
     last_device = d->prev;
-
-    if (d->vbios != NULL) {
-      free(d->vbios);
-    }
 
     free((void *)d);
   }
@@ -660,87 +654,26 @@ static int opencl_get_devices() { return 0; }
 /***********************************************
  * VBIOS functions
  ***********************************************/
-static size_t dump_vbios(gpu_t *gpu) {
-  size_t success = 0;
-  char obj[1024];
-  FILE *fp;
+static void get_bios_version(gpu_t *gpu)
+{
+    FILE *fp;
+    char str[64];
 
-  sprintf(obj, "%s/rom", gpu->path);
+    char* GPUVbiosFile = (char*)malloc(sizeof(char) * (12 + strlen(gpu->path)));
+    sprintf(GPUVbiosFile, "%s/vbios_version", gpu->path);
 
-  // unlock vbios
-  if ((fp = fopen(obj, "w")) == NULL) {
-    print(LOG_ERROR, "%02x:%02x.%x: Unable to unlock vbios\n", gpu->pcibus,
-          gpu->pcidev, gpu->pcifunc);
-    return 0;
-  }
-
-  fputs("1\n", fp);
-  fclose(fp);
-
-  // if vbios buffer in use, free it
-  if (gpu->vbios != NULL) {
-    free(gpu->vbios);
-  }
-
-  // allocate 64k for vbios - could be larger but for now only read 64k
-  if ((gpu->vbios = (unsigned char *)malloc(0x10000)) == NULL) {
-    print(LOG_ERROR, "%02x:%02x.%x: Unable to allocate memory for vbios\n",
-          gpu->pcibus, gpu->pcidev, gpu->pcifunc);
-    goto relock;
-  }
-
-  // read vbios into buffer
-  if ((fp = fopen(obj, "r")) == NULL) {
-    print(LOG_ERROR, "%02x:%02x.%x: Unable to read vbios\n", gpu->pcibus,
-          gpu->pcidev, gpu->pcifunc);
-    free(gpu->vbios);
-    goto relock;
-  }
-
-  success = fread(gpu->vbios, 0x10000, 1, fp);
-  fclose(fp);
-
-  // temp fix some gpus returned less than 64k...
-  success = 1;
-
-relock:
-  // relock vbios
-  if ((fp = fopen(obj, "w")) == NULL) {
-    print(LOG_ERROR, "%02x:%02x.%x: Unable to relock vbios\n", gpu->pcibus,
-          gpu->pcidev, gpu->pcifunc);
-    return 0;
-  }
-
-  fputs("0\n", fp);
-  fclose(fp);
-
-  return success;
-}
-
-#define rbios8(vbios, offset) *((u8 *)(vbios) + (offset))
-#define rbios16(vbios, offset) *((u16 *)((vbios) + (offset)))
-#define rbios32(vbios, offset) *((u32 *)((vbios) + (offset)))
-
-static void get_bios_version(gpu_t *gpu) {
-  char c, *p, *v;
-  u16 ver_offset = rbios16(gpu->vbios, 0x6e);
-  int len;
-
-  v = gpu->bios_version;
-  memset(v, 0, 64);
-
-  // check for invalid vbios
-  if (*((u16 *)gpu->vbios) != 0xaa55) {
-    return;
-  }
-
-  p = (char *)(gpu->vbios + ver_offset);
-  len = 0;
-
-  while (((c = *(p++)) != 0) && len < 63) {
-    *(v++) = c;
-    ++len;
-  }
+    /* opening file for reading */
+    fp = fopen(GPUVbiosFile , "r");
+    if(fp == NULL) {
+        return;
+    }
+    if( fgets (gpu->bios_version, 64, fp) == NULL ) {
+        gpu->bios_version[0] = 0;
+    }
+    /* Remove new line */
+    char *p = strchr(gpu->bios_version, '\n');
+    strcpy(p, p + 1);
+    fclose(fp);
 }
 
 // print memory timing
@@ -912,17 +845,8 @@ int main(int argc, char *argv[]) {
 
         d->gpu = find_gpu(pcidev->vendor_id, pcidev->device_id, d->subdevice,
                           d->pcirev);
-
-        if (dump_vbios(d)) {
-          /*printf("%02x.%02x.%x: vbios dump successful.\n", d->pcibus,
-          d->pcidev, d->pcifunc); printf("%x %x\n", d->vbios[0], d->vbios[1]);*/
-          get_bios_version(d);
-        }
-        /*else {
-          printf("%02x.%02x.%x: vbios dump failed.\n", d->pcibus, d->pcidev,
-        d->pcifunc);
-        }*/
-
+	// Get VBIOS from file
+        get_bios_version(d);
         // currenty Vega GPUs do not have a memory configuration register to
         // read
         if (d->gpu->asic_type == CHIP_VEGA10) {
@@ -1014,7 +938,7 @@ int main(int argc, char *argv[]) {
 
       // only output bios version
       if (opt_bios_only) {
-        printf("%s\n", d->bios_version);
+        printf("%s", d->bios_version);
       }
       // standard short form
       else {
@@ -1026,7 +950,6 @@ int main(int argc, char *argv[]) {
           printf("Unknown GPU %04x-%04xr%02x:", d->vendor_id, d->device_id,
                  d->pcirev);
         }
-
         printf("%s:", d->bios_version);
 
         if (opt_show_memconfig) {
