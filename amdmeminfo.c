@@ -672,7 +672,7 @@ static void get_bios_version(gpu_t *gpu)
     }
     /* Remove new line */
     char *p = strchr(gpu->bios_version, '\n');
-    strcpy(p, p + 1);
+    if(p) strcpy(p, p+1);
     fclose(fp);
 }
 
