@@ -654,26 +654,26 @@ static int opencl_get_devices() { return 0; }
 /***********************************************
  * VBIOS functions
  ***********************************************/
-static void get_bios_version(gpu_t *gpu)
-{
-    FILE *fp;
-    char str[64];
+static void get_bios_version(gpu_t *gpu) {
+  FILE *fp;
+  char str[64];
 
-    char* GPUVbiosFile = (char*)malloc(sizeof(char) * (12 + strlen(gpu->path)));
-    sprintf(GPUVbiosFile, "%s/vbios_version", gpu->path);
+  char *GPUVbiosFile = (char *)malloc(sizeof(char) * (12 + strlen(gpu->path)));
+  sprintf(GPUVbiosFile, "%s/vbios_version", gpu->path);
 
-    /* opening file for reading */
-    fp = fopen(GPUVbiosFile , "r");
-    if(fp == NULL) {
-        return;
-    }
-    if( fgets (gpu->bios_version, 64, fp) == NULL ) {
-        gpu->bios_version[0] = 0;
-    }
-    /* Remove new line */
-    char *p = strchr(gpu->bios_version, '\n');
-    if(p) strcpy(p, p+1);
-    fclose(fp);
+  /* opening file for reading */
+  fp = fopen(GPUVbiosFile, "r");
+  if (fp == NULL) {
+    return;
+  }
+  if (fgets(gpu->bios_version, 64, fp) == NULL) {
+    gpu->bios_version[0] = 0;
+  }
+  /* Remove new line */
+  char *p = strchr(gpu->bios_version, '\n');
+  if (p)
+    strcpy(p, p + 1);
+  fclose(fp);
 }
 
 // print memory timing
@@ -845,7 +845,7 @@ int main(int argc, char *argv[]) {
 
         d->gpu = find_gpu(pcidev->vendor_id, pcidev->device_id, d->subdevice,
                           d->pcirev);
-	// Get VBIOS from file
+        // Get VBIOS from file
         get_bios_version(d);
         // currenty Vega GPUs do not have a memory configuration register to
         // read
