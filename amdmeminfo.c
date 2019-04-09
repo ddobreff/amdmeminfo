@@ -938,7 +938,7 @@ int main(int argc, char *argv[]) {
 
       // only output bios version
       if (opt_bios_only) {
-        printf("%s", d->bios_version);
+        printf("%s\n", d->bios_version);
       }
       // standard short form
       else {
