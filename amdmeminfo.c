@@ -53,6 +53,7 @@
 #define MEM_UNKNOWN 0x0
 #define MEM_GDDR5 0x5
 #define MEM_HBM 0x6
+#define MEM_GDDR6 0x7
 
 #define mmMC_SEQ_MISC0 0xa80
 #define mmMC_SEQ_RAS_TIMING 0xa28
@@ -97,6 +98,7 @@ typedef enum AMD_CHIPS {
   CHIP_VEGA10,
   CHIP_VEGA20,
   CHIP_RAVEN,
+  CHIP_NAVI10,
 } asic_type_t;
 
 static const char *mem_type_label[] = {
@@ -108,7 +110,7 @@ static const char *amd_asic_name[] = {
     "Antilles",  "Tahiti",  "Pitcairn", "Verde",  "Oland",     "Hainan",
     "Bonaire",   "Kaveri",  "Kabini",   "Hawaii", "Mullins",   "Topaz",
     "Tonga",     "Fiji",    "Carrizo",  "Stoney", "Polaris10", "Polaris11",
-    "Polaris12", "Vega10",  "Vega20",   "Raven",
+    "Polaris12", "Vega10",  "Vega20",   "Raven",  "Navi10",
 };
 
 /***********************************
@@ -203,6 +205,18 @@ typedef struct {
 } gputype_t;
 
 static gputype_t gputypes[] = {
+    /* Navi10 */
+    {0x1002, 0x7310, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
+    {0x1002, 0x7312, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
+    {0x1002, 0x7318, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
+    {0x1002, 0x7319, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
+    {0x1002, 0x731a, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
+    {0x1002, 0x731b, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
+    {0x1002, 0x731f, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
+    {0x1002, 0x731f, 0, 0xc0, "Radeon RX 5700 XT 50th Anniversary",
+     CHIP_NAVI10},
+    {0x1002, 0x731f, 0, 0xc1, "Radeon RX 5700 XT", CHIP_NAVI10},
+    {0x1002, 0x731f, 0, 0xc4, "Radeon RX 5700 XL", CHIP_NAVI10},
     /* Vega20 - Radeon VII */
     {0x1002, 0x66a0, 0, 0, "Radeon Instinct", CHIP_VEGA20},
     {0x1002, 0x66a1, 0, 0, "Radeon Vega20", CHIP_VEGA20},
@@ -383,6 +397,12 @@ static memtype_t memtypes[] = {
     {MEM_GDDR5, 0x0, -1, "Unknown GDDR5"},
     {MEM_HBM, 0x0, -1, "Unknown HBM"},
     {MEM_UNKNOWN, 0x0, -1, "Unknown Memory"},
+
+    /* GDDR6 */
+    {MEM_GDDR6, 0x1 - 1, "Unknown Samsung GDDR6"},
+    {MEM_GDDR6, 0x6, -1, "Unknown Hynix GDDR6"},
+    {MEM_GDDR6, 0xf, -1, "Unknown Micron GDDR6"},
+
 };
 
 // Find Memory Model by manufacturer/model
