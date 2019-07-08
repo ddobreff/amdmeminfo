@@ -399,7 +399,7 @@ static memtype_t memtypes[] = {
     {MEM_UNKNOWN, 0x0, -1, "Unknown Memory"},
 
     /* GDDR6 */
-    {MEM_GDDR6, 0x1 - 1, "Unknown Samsung GDDR6"},
+    {MEM_GDDR6, 0x1, -1, "Unknown Samsung GDDR6"},
     {MEM_GDDR6, 0x6, -1, "Unknown Hynix GDDR6"},
     {MEM_GDDR6, 0xf, -1, "Unknown Micron GDDR6"},
 
