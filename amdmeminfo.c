@@ -227,6 +227,7 @@ static gputype_t gputypes[] = {
     {0x1002, 0x7362, 0, 0, "Radeon Navi 12", CHIP_NAVI12},
     /* Navi14 */
     {0x1002, 0x7340, 0, 0, "Radeon RX 5500", CHIP_NAVI14},
+    {0x1002, 0x7340, 0, 0xc5, "Radeon RX 5500 XT", CHIP_NAVI14},
     {0x1002, 0x7341, 0, 0, "Radeon Pro W5500", CHIP_NAVI14},
     {0x1002, 0x7347, 0, 0, "Radeon Pro W5500M", CHIP_NAVI14},
     {0x1002, 0x734f, 0, 0, "Radeon Pro W5500M", CHIP_NAVI14},
