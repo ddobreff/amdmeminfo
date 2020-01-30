@@ -99,6 +99,8 @@ typedef enum AMD_CHIPS {
   CHIP_VEGA20,
   CHIP_RAVEN,
   CHIP_NAVI10,
+  CHIP_NAVI12,
+  CHIP_NAVI14,
 } asic_type_t;
 
 static const char *mem_type_label[] = {
@@ -110,7 +112,9 @@ static const char *amd_asic_name[] = {
     "Antilles",  "Tahiti",  "Pitcairn", "Verde",  "Oland",     "Hainan",
     "Bonaire",   "Kaveri",  "Kabini",   "Hawaii", "Mullins",   "Topaz",
     "Tonga",     "Fiji",    "Carrizo",  "Stoney", "Polaris10", "Polaris11",
-    "Polaris12", "Vega10",  "Vega20",   "Raven",  "Navi10",
+    "Polaris12", "Vega10",  "Vega20",   "Raven",  "Navi10",    "Navi12",
+    "Navi14",
+
 };
 
 /***********************************
@@ -207,16 +211,25 @@ typedef struct {
 static gputype_t gputypes[] = {
     /* Navi10 */
     {0x1002, 0x7310, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
-    {0x1002, 0x7312, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
+    {0x1002, 0x7312, 0, 0, "Radeon Pro W5700", CHIP_NAVI10},
     {0x1002, 0x7318, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
     {0x1002, 0x7319, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
     {0x1002, 0x731a, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
     {0x1002, 0x731b, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
-    {0x1002, 0x731f, 0, 0, "Radeon RX 5700", CHIP_NAVI10},
+    {0x1002, 0x731f, 0, 0, "Radeon RX 5600/5700", CHIP_NAVI10},
     {0x1002, 0x731f, 0, 0xc0, "Radeon RX 5700 XT 50th Anniversary",
      CHIP_NAVI10},
     {0x1002, 0x731f, 0, 0xc1, "Radeon RX 5700 XT", CHIP_NAVI10},
     {0x1002, 0x731f, 0, 0xc4, "Radeon RX 5700 XL", CHIP_NAVI10},
+    {0x1002, 0x731f, 0, 0xca, "Radeon RX 5600 XT", CHIP_NAVI10},
+    /* Navi12 */
+    {0x1002, 0x7360, 0, 0, "Radeon Navi 12", CHIP_NAVI12},
+    {0x1002, 0x7362, 0, 0, "Radeon Navi 12", CHIP_NAVI12},
+    /* Navi14 */
+    {0x1002, 0x7340, 0, 0, "Radeon RX 5500", CHIP_NAVI14},
+    {0x1002, 0x7341, 0, 0, "Radeon Pro W5500", CHIP_NAVI14},
+    {0x1002, 0x7347, 0, 0, "Radeon Pro W5500M", CHIP_NAVI14},
+    {0x1002, 0x734f, 0, 0, "Radeon Pro W5500M", CHIP_NAVI14},
     /* Vega20 - Radeon VII */
     {0x1002, 0x66a0, 0, 0, "Radeon Instinct", CHIP_VEGA20},
     {0x1002, 0x66a1, 0, 0, "Radeon Vega20", CHIP_VEGA20},
@@ -242,8 +255,7 @@ static gputype_t gputypes[] = {
     {0x1002, 0x67df, 0, 0xe7, "Radeon RX 580", CHIP_POLARIS10},
     {0x1002, 0x67df, 0, 0xef, "Radeon RX 570", CHIP_POLARIS10},
     {0x1002, 0x67ff, 0, 0xcf, "Radeon RX 560", CHIP_POLARIS11},
-    {0x1002, 0x67ff, 0, 0xff, "Radeon RX 550",
-     CHIP_POLARIS11}, /* new RX550 with 640 shaders */
+    {0x1002, 0x67ff, 0, 0xff, "Radeon RX 550", CHIP_POLARIS11},
     {0x1002, 0x699f, 0, 0xc7, "Radeon RX 550", CHIP_POLARIS12},
     /* RX 4xx */
     {0x1002, 0x67df, 0, 0, "Radeon RX 470/480", CHIP_POLARIS10},
@@ -394,15 +406,18 @@ static memtype_t memtypes[] = {
     {MEM_HBM, 0x9, -1, "Unknown ESMT HBM"},
     {MEM_HBM, 0xf, -1, "Unknown Micron HBM"},
 
-    {MEM_GDDR5, 0x0, -1, "Unknown GDDR5"},
-    {MEM_HBM, 0x0, -1, "Unknown HBM"},
-    {MEM_UNKNOWN, 0x0, -1, "Unknown Memory"},
-
     /* GDDR6 */
-    {MEM_GDDR6, 0x1, -1, "Unknown Samsung GDDR6"},
-    {MEM_GDDR6, 0x6, -1, "Unknown Hynix GDDR6"},
-    {MEM_GDDR6, 0xf, -1, "Unknown Micron GDDR6"},
+    {MEM_GDDR6, 0x1, -1, "Samsung GDDR6"},
+    {MEM_GDDR6, 0x1, 0x8, "Samsung K4Z80325BC"},
+    {MEM_GDDR6, 0x6, -1, "Hynix GDDR6"},
+    {MEM_GDDR6, 0xf, -1, "Micron GDDR6"},
+    {MEM_GDDR6, 0xf, 0x0, "Micron MT61K256M32"},
 
+    /* UNKNOWN LAST */
+    {MEM_GDDR5, -1, -1, "GDDR5"},
+    {MEM_GDDR6, -1, -1, "GDDR6"},
+    {MEM_HBM, -1, -1, "Unknown HBM"},
+    {MEM_UNKNOWN, -1, -1, "Unknown Memory"},
 };
 
 // Find Memory Model by manufacturer/model
@@ -869,7 +884,8 @@ int main(int argc, char *argv[]) {
         get_bios_version(d);
         // currenty Vega GPUs do not have a memory configuration register to
         // read
-        if (d->gpu->asic_type == CHIP_VEGA10) {
+        if ((d->gpu->asic_type == CHIP_VEGA10) ||
+            (d->gpu->asic_type == CHIP_VEGA20)) {
           d->memconfig = 0x61000000;
           d->mem_type = MEM_HBM;
           d->mem_manufacturer = 1;
